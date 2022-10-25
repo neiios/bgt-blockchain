@@ -23,5 +23,8 @@ $(BINARY): $(OBJECTS)
 clean:
 	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)
 
+run:
+	./bin
+
 -include $(DEPFILES)
 .PHONY: all clean run
