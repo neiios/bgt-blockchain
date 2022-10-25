@@ -15,7 +15,7 @@ class Transaction {
     // public key of the user who gets the transaction
     std::string address;
     uint64_t timestamp;
-    uint64_t amount;
+    int amount;
 
   public:
     Transaction(const std::string& s, const std::string& ad, const uint64_t& am)

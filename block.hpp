@@ -16,7 +16,7 @@ class Block {
     // header
     std::string prevHash;
     uint64_t timestamp;
-    uint8_t difTarget;
+    uint32_t difTarget;
     uint32_t version;
     // body
     std::vector<Transaction> transactions;
@@ -29,8 +29,11 @@ class Block {
         Hash h;
 
         // convert vector of transactions to a string
+        // TODO: it should actually be a merkle hash, and not some merged
+        // together strings
         std::copy(transactions.begin(), transactions.end(),
                   std::ostream_iterator<Transaction>(s));
+
         return h.hashString(s.str());
     }
 
@@ -61,8 +64,14 @@ class Block {
             // TODO: nonce may oveflow here
             nonce++;
         }
-        std::cout << "the block has been mined, root hash is " << hash
-                  << " and nonce is " << nonce << std::endl;
+        std::cout << "Block hash: " << hash << std::endl;
+    }
+
+    std::string hashBlock() {
+        Hash h;
+        return h.hashString(prevHash + std::to_string(timestamp) +
+                            std::to_string(version) + rootHash +
+                            std::to_string(nonce) + std::to_string(difTarget));
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Block& b) {
@@ -70,6 +79,12 @@ class Block {
            << "\n Version: " << b.version << "\n Root Hash: " << b.rootHash
            << "\n Nonce: " << b.nonce << "\n Dif. target: " << b.difTarget
            << std::endl;
+
+        os << "------\nBlock data as it was used for hashing:\n"
+           << b.prevHash + std::to_string(b.timestamp) +
+                  std::to_string(b.version) + b.rootHash +
+                  std::to_string(b.nonce) + std::to_string(b.difTarget);
+
         return os;
     }
 };

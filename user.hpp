@@ -6,7 +6,7 @@
 
 class User {
   private:
-    uint64_t balance;
+    int balance;
     std::string username;
     std::string pk;
 
