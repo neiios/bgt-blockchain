@@ -29,6 +29,13 @@ class Transaction {
                           std::to_string(amount));
     }
 
+    auto getSender() const { return sender; }
+    auto getAddress() const { return address; }
+    auto getAmount() const { return amount; }
+    auto getSender() { return sender; }
+    auto getAddress() { return address; }
+    auto getAmount() { return amount; }
+
     friend std::ostream& operator<<(std::ostream& os, const Transaction& t) {
         os << t.id << '/' << t.sender << '/' << t.address << '/' << t.timestamp
            << '/' << t.amount;

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "block.hpp"
+#include "helpers.hpp"
 #include "transaction.hpp"
 #include "user.hpp"
 
@@ -14,14 +15,6 @@
 #define VERSION 1
 
 using namespace std;
-
-std::random_device dev;
-std::mt19937 rng(dev());
-
-auto generateRandomNumber(const int& start, const int& end) {
-    std::uniform_int_distribution<std::mt19937::result_type> dist(start, end);
-    return dist(rng);
-}
 
 int main() {
     Hash h;
@@ -55,6 +48,8 @@ int main() {
     for (int i = 0; i < TRANSACTION_COUNT / TRANSACTIONS_IN_BLOCK; i++) {
         vector<Transaction> blockTransactions;
         for (int j = 0; j < TRANSACTIONS_IN_BLOCK; j++) {
+            // TODO: check the transaction and remove it from the pool if its
+            // invalid
             blockTransactions.push_back(pool.at(j));
         }
         // remove transactions from the pool
@@ -74,7 +69,8 @@ int main() {
              << blockchain.back() << endl
              << endl;
 
-        // TODO: actually change the user balance after mining the block
+        // update the user balance after the block has been mined
+        updateUserBalance(blockchain.back(), users);
     }
 
     return 0;

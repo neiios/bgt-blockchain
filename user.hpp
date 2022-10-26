@@ -22,4 +22,8 @@ class User {
     }
 
     void setBalance(const uint64_t& b) { balance = b; }
+    auto getBalance() { return balance; }
+    auto getBalance() const { return balance; }
+
+    std::string getPublicKey() { return pk; }
 };

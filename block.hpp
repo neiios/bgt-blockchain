@@ -74,6 +74,10 @@ class Block {
                             std::to_string(nonce) + std::to_string(difTarget));
     }
 
+    const std::vector<Transaction>& getTransactions() const {
+        return transactions;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Block& b) {
         os << "Previous hash: " << b.prevHash << "\n Timestamp: " << b.timestamp
            << "\n Version: " << b.version << "\n Root Hash: " << b.rootHash
