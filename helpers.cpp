@@ -14,12 +14,10 @@ std::vector<User>::iterator findUser(std::vector<User>& users,
                         [&pk](User u) { return u.getPublicKey() == pk; });
 }
 
-void updateUserBalance(const Block& newBlock, std::vector<User>& users) {
-    for (const auto& transaction : newBlock.getTransactions()) {
-        auto sender = findUser(users, transaction.getSender());
-        (*sender).setBalance((*sender).getBalance() - transaction.getAmount());
-        auto address = findUser(users, transaction.getAddress());
-        (*address).setBalance((*address).getBalance() +
-                              transaction.getAmount());
-    }
+void updateUserBalance(const Transaction& transaction,
+                       std::vector<User>& users) {
+    auto sender = findUser(users, transaction.getSender());
+    (*sender).setBalance((*sender).getBalance() - transaction.getAmount());
+    auto address = findUser(users, transaction.getAddress());
+    (*address).setBalance((*address).getBalance() + transaction.getAmount());
 }
