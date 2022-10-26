@@ -31,7 +31,7 @@ class Block {
 
         // convert vector of transactions to a string
         // TODO: it should actually be a merkle hash, and not some merged
-        // together strings
+        // together string thing
         std::copy(transactions.begin(), transactions.end(),
                   std::ostream_iterator<Transaction>(s));
 
@@ -52,23 +52,21 @@ class Block {
           rootHash(findTransactionsHash()) {
         Hash h;
         std::string prefix(difTarget, '0');
-        std::string hash;
         // actually mine the block
         while (true) {
             // hash the header of a block
-            hash = h.hashString(
+            std::string hash = h.hashString(
                 prevHash + std::to_string(timestamp) + std::to_string(version) +
                 rootHash + std::to_string(nonce) + std::to_string(difTarget));
             if (hash.starts_with(prefix)) {
                 break;
             }
-            // TODO: nonce may oveflow here
+            // nonce may oveflow here
             nonce++;
         }
-        std::cout << "Block hash: " << hash << std::endl;
     }
 
-    std::string hashBlock() {
+    std::string hashBlock() const {
         Hash h;
         return h.hashString(prevHash + std::to_string(timestamp) +
                             std::to_string(version) + rootHash +
@@ -80,15 +78,18 @@ class Block {
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Block& b) {
-        os << "Previous hash: " << b.prevHash << "\n Timestamp: " << b.timestamp
-           << "\n Version: " << b.version << "\n Root Hash: " << b.rootHash
-           << "\n Nonce: " << b.nonce << "\n Dif. target: " << b.difTarget
-           << std::endl;
+        os << "\nPrevious block hash: " << b.prevHash
+           << "\nTimestamp: " << b.timestamp << "\nVersion: " << b.version
+           << "\nRoot Hash: " << b.rootHash << "\nNonce: " << b.nonce
+           << "\nDif. target: " << b.difTarget
+           << "\nBlock hash: " << b.hashBlock()
+           << "\nTransaction count: " << b.transactions.size() << std::endl;
 
         os << "------\nBlock data as it was used for hashing:\n"
            << b.prevHash + std::to_string(b.timestamp) +
                   std::to_string(b.version) + b.rootHash +
-                  std::to_string(b.nonce) + std::to_string(b.difTarget);
+                  std::to_string(b.nonce) + std::to_string(b.difTarget)
+           << std::endl;
 
         return os;
     }
