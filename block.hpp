@@ -26,7 +26,7 @@ class Block {
     std::vector<Transaction> transactions;
     // header
     std::string rootHash;
-    uint64_t nonce = 0;
+    uint64_t nonce = -1;
 
     std::string findRootHash() {
         std::vector<std::string> hashes;
@@ -54,11 +54,19 @@ class Block {
           difTarget(dt),
           version(v),
           transactions(tr),
-          rootHash(findRootHash()) {
+          rootHash(findRootHash()) {}
+
+    /**
+     * @brief Function that finds a nonce so that a block hash start with n
+     * zeros
+     *
+     */
+    void mine() {
         Hash h;
         std::string prefix(difTarget, '0');
         // actually mine the block
         while (true) {
+            nonce++;
             // hash the header of a block
             std::string hash = h.hashString(
                 prevHash + std::to_string(timestamp) + std::to_string(version) +
@@ -66,11 +74,13 @@ class Block {
             if (hash.starts_with(prefix)) {
                 break;
             }
-            // nonce may oveflow here
-            nonce++;
         }
     }
 
+    /**
+     * @brief Checks the hash of the block
+     *
+     */
     std::string hashBlock() const {
         Hash h;
         return h.hashString(prevHash + std::to_string(timestamp) +

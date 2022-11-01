@@ -35,20 +35,23 @@ class Transaction {
     auto getSender() const { return sender; }
     auto getAddress() const { return address; }
     auto getAmount() const { return amount; }
+    auto getId() const { return id; }
     auto getSender() { return sender; }
     auto getAddress() { return address; }
     auto getAmount() { return amount; }
+    auto getId() { return id; }
 
-    std::string stringifyTransaction() {
-        std::stringstream os;
-        os << id << '/' << sender << '/' << address << '/' << timestamp << '/'
-           << amount;
-        return os.str();
+    /**
+     * @brief Output transaction in a nicely formatted way.
+     *
+     */
+    friend std::ostream& operator<<(std::ostream& os, const Transaction& t) {
+        os << "Hash: " << t.id << " Amount: " << t.amount << " " << t.sender
+           << " -> " << t.address << " Timestamp: " << t.timestamp;
+        return os;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Transaction& t) {
-        os << t.id << '/' << t.sender << '/' << t.address << '/' << t.timestamp
-           << '/' << t.amount;
-        return os;
+    friend bool operator==(const Transaction& rhs, const Transaction& lhs) {
+        return rhs.getId() == lhs.getId();
     }
 };
