@@ -7,9 +7,12 @@
 #include <iterator>
 #include <list>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
+#include "defines.hpp"
 #include "hash.hpp"
+#include "merkleTree.hpp"
 #include "transaction.hpp"
 
 class Block {
@@ -25,17 +28,19 @@ class Block {
     std::string rootHash;
     uint64_t nonce = 0;
 
-    std::string findTransactionsHash() {
-        std::ostringstream s;
-        Hash h;
-
-        // convert vector of transactions to a string
-        // TODO: it should actually be a merkle hash, and not some merged
-        // together string thing
-        std::copy(transactions.begin(), transactions.end(),
-                  std::ostream_iterator<Transaction>(s));
-
-        return h.hashString(s.str());
+    std::string findRootHash() {
+        std::vector<std::string> hashes;
+        // find the hashes of each transaction
+        std::transform(transactions.begin(), transactions.end(),
+                       std::back_inserter(hashes), [](const Transaction& t) {
+                           Hash h;
+                           std::ostringstream os;
+                           os << t;
+                           return h.hashString(os.str());
+                       });
+        // find merkle root hash
+        MerkleTree m;
+        return m.findMerkleRootHash(hashes);
     }
 
   public:
@@ -49,7 +54,7 @@ class Block {
           difTarget(dt),
           version(v),
           transactions(tr),
-          rootHash(findTransactionsHash()) {
+          rootHash(findRootHash()) {
         Hash h;
         std::string prefix(difTarget, '0');
         // actually mine the block

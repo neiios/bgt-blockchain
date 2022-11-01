@@ -4,7 +4,10 @@
 #include <functional>
 #include <hash.hpp>
 #include <iostream>
+#include <ostream>
+#include <sstream>
 #include <string>
+#include "defines.hpp"
 
 class Transaction {
   private:
@@ -35,6 +38,13 @@ class Transaction {
     auto getSender() { return sender; }
     auto getAddress() { return address; }
     auto getAmount() { return amount; }
+
+    std::string stringifyTransaction() {
+        std::stringstream os;
+        os << id << '/' << sender << '/' << address << '/' << timestamp << '/'
+           << amount;
+        return os.str();
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const Transaction& t) {
         os << t.id << '/' << t.sender << '/' << t.address << '/' << t.timestamp

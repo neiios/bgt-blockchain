@@ -1,0 +1,8 @@
+#pragma once
+
+#define USER_COUNT 2
+#define TRANSACTION_COUNT 10
+#define TRANSACTIONS_IN_BLOCK 5
+#define DIFFICULTY_TARGET 3
+#define VERSION 1
+#define BE_VERBOSE

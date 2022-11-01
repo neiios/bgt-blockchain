@@ -5,17 +5,11 @@
 #include <string>
 #include <vector>
 #include "block.hpp"
+#include "defines.hpp"
 #include "helpers.hpp"
 #include "merkleTree.hpp"
 #include "transaction.hpp"
 #include "user.hpp"
-
-#define USER_COUNT 5
-#define TRANSACTION_COUNT 20
-#define TRANSACTIONS_IN_BLOCK 5
-#define DIFFICULTY_TARGET 3
-#define VERSION 1
-#define BE_VERBOSE
 
 using namespace std;
 
