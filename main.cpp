@@ -6,13 +6,14 @@
 #include <vector>
 #include "block.hpp"
 #include "helpers.hpp"
+#include "merkleTree.hpp"
 #include "transaction.hpp"
 #include "user.hpp"
 
-#define USER_COUNT 1000
-#define TRANSACTION_COUNT 10000
-#define TRANSACTIONS_IN_BLOCK 100
-#define DIFFICULTY_TARGET 4
+#define USER_COUNT 5
+#define TRANSACTION_COUNT 20
+#define TRANSACTIONS_IN_BLOCK 5
+#define DIFFICULTY_TARGET 3
 #define VERSION 1
 #define BE_VERBOSE
 
@@ -24,15 +25,21 @@ int main() {
     vector<User> users;
     for (int i = 0; i < USER_COUNT; i++) {
         users.emplace_back("user" + to_string(i),
-                           generateRandomNumber(100, 1000000));
+                           generateRandomNumber(100, 1000));
     }
+
+#ifdef BE_VERBOSE
+    for (const auto& u : users) {
+        cout << u << endl;
+    }
+#endif
 
     // create a pool and place 10000 transaction into it
     vector<Transaction> pool;
     for (int i = 0; i < TRANSACTION_COUNT; i++) {
         auto firstUser = generateRandomNumber(0, USER_COUNT);
         auto secondUser = generateRandomNumber(0, USER_COUNT);
-        auto transactionAmount = generateRandomNumber(10, 100000);
+        auto transactionAmount = generateRandomNumber(10, 100);
         pool.emplace_back(h.hashString("user" + to_string(firstUser)),
                           h.hashString("user" + to_string(secondUser)),
                           transactionAmount);
@@ -48,15 +55,14 @@ int main() {
     vector<Block> blockchain;
 
     // TODO: select transactions from the pool randomly
-    while (pool.size() != 0) {
+    while (!pool.empty()) {
         vector<Transaction> blockTransactions;
-        vector<User> usersTemp(users);
 
         // add transactions from a pool to a new block
         while (blockTransactions.size() < TRANSACTIONS_IN_BLOCK &&
-               pool.size() != 0) {
+               !pool.empty()) {
             // check if senders balance is more or equal to transaction amount
-            auto sender = findUser(usersTemp, pool.front().getSender());
+            auto sender = findUser(users, pool.front().getSender());
             if (sender->getBalance() < pool.front().getAmount()) {
                 // remove the transaction and skip to the next one
                 pool.erase(pool.begin());
@@ -65,7 +71,7 @@ int main() {
 
             blockTransactions.push_back(pool.front());
             // update the user balance temporarily
-            updateUserBalance(pool.front(), usersTemp);
+            // updateUserBalance(pool.front(), usersTemp);
             pool.erase(pool.begin());
         }
 
