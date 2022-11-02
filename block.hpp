@@ -42,7 +42,7 @@ class Block {
         MerkleTree m;
 #ifdef BE_VERBOSE
         std::cout
-            << "\nConstructiing a merkle tree and finding its root hash...\n";
+            << "\nConstructing a merkle tree and finding its root hash...\n";
 #endif
         return m.findMerkleRootHash(hashes);
     }
@@ -97,18 +97,16 @@ class Block {
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Block& b) {
-        os << "\nPrevious block hash: " << b.prevHash
+        os << "Previous block hash: " << b.prevHash
            << "\nTimestamp: " << b.timestamp << "\nVersion: " << b.version
            << "\nRoot Hash: " << b.rootHash << "\nNonce: " << b.nonce
            << "\nDif. target: " << b.difTarget
            << "\nBlock hash: " << b.hashBlock()
-           << "\nTransaction count: " << b.transactions.size() << std::endl;
-
-        os << "------\nBlock data as it was used for hashing:\n"
+           << "\nTransaction count: " << b.transactions.size()
+           << "\nBlock data as it was used for hashing: "
            << b.prevHash + std::to_string(b.timestamp) +
                   std::to_string(b.version) + b.rootHash +
-                  std::to_string(b.nonce) + std::to_string(b.difTarget)
-           << std::endl;
+                  std::to_string(b.nonce) + std::to_string(b.difTarget);
 
         return os;
     }

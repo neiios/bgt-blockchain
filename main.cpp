@@ -16,35 +16,39 @@ string outputHelp() {
     return res.str();
 }
 
+std::string printLines() {
+    std::stringstream os;
+#ifdef BE_VERBOSE
+    os << std::string(50, '-') << std::endl;
+#endif
+    return os.str();
+}
+
 void simulateBlockchain() {
     // create blockchain
     Blockchain b;
     // generate new users
-#ifdef BE_VERBOSE
-    std::cout << "Generating users..." << std::endl;
-#endif
+    std::cout << printLines() << "Generating users..." << std::endl
+              << printLines();
     b.generateUsers(USER_COUNT, MIN_BALANCE, MAX_BALANCE);
     // generate new transactions
-#ifdef BE_VERBOSE
-    std::cout << "Generating transactions..." << std::endl;
-#endif
+    std::cout << printLines() << "Generating transactions..." << std::endl
+              << printLines();
     b.generateTransactions(TRANSACTION_COUNT, MIN_TRANSACTION, MAX_TRANSACTION);
-    // mine block
-    // TODO: fix a crash when sender has not enough balance
-#ifdef BE_VERBOSE
-    std::cout << "Mining..." << std::endl;
-#endif
-    while (!b.getPoolStatus()) {
+    // verify transactions
+    b.verifyTransactions();
+    // mine the block
+    std::cout << printLines() << "Mining..." << std::endl;
+    do {
         b.mineBlock();
-        cout << endl << b << endl;
-    }
-
-#ifdef BE_VERBOSE
-    std::cout << "User balance at the end:" << std::endl;
+    } while (!b.getPoolStatus());
+    // more info at the end
+    std::cout << printLines() << "Final state:\n"
+              << std::string(50, '-') << b << std::endl;
+    std::cout << printLines() << "User balance at the end:\n" << printLines();
     for (const User& user : b.getUsers()) {
         std::cout << user << endl;
     }
-#endif
 }
 
 int main(int argc, char* argv[]) {

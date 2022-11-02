@@ -137,8 +137,11 @@ class Blockchain {
     void mineBlock();
 
     friend std::ostream& operator<<(std::ostream& os, const Blockchain& b) {
-        for (const auto& block : b.blockchain)
-            os << block << std::endl;
+        int i = 0;
+        for (const auto& block : b.blockchain) {
+            os << "\nBlock number " << i << ":\n" << block << "\n";
+            i++;
+        }
         return os;
     }
 

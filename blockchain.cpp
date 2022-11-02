@@ -77,7 +77,8 @@ void Blockchain::mineBlock() {
         return;
     }
 #ifdef BE_VERBOSE
-    std::cout << "Mining block " << blockchain.size() << std::endl;
+    std::cout << std::string(50, '-') << "\nMining the block "
+              << blockchain.size() << std::endl;
 #endif
     // create a vector for potential transactions
     std::vector<Transaction> candidates;
@@ -132,7 +133,7 @@ void Blockchain::mineBlock() {
 
 void Blockchain::removeTransactions(const Block& block) {
 #ifdef BE_VERBOSE
-    std::cout << "Removing transaction from a pool." << std::endl;
+    std::cout << "Removing transactions from a pool." << std::endl;
 #endif
     for (const auto& t : block.getTransactions()) {
         auto it = std::find_if(pool.begin(), pool.end(), [&t](Transaction tr) {
