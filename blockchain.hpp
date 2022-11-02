@@ -46,24 +46,28 @@ class Blockchain {
     }
 
     /**
-     * @brief Selects a random transaction from a pool
+     * @brief Select a random transaction from a specified pool
      *
-     * @return iterator to the transaction
+     * @param p pool to select transactions from
+     * @return random transaction iterator
      */
-    auto selectRandomTransaction() {
-        auto shift = generateRandomNumber(0, pool.size() - 1);
-        return pool.begin() + shift;
+    auto selectRandomTransaction(const std::vector<Transaction>& p) {
+        auto shift = generateRandomNumber(0, p.size() - 1);
+        return p.begin() + shift;
     }
 
     /**
      * @brief Adds transaction to a new block. Checks and updates user balance
      * as well.
      *
-     * @param us vector of users. Used to find sender and check balance.
+     * @param us temporary vector of users. Used to find sender and check
+     * balance.
+     * @param poo temporary vector of transactions
      * @param candidates vector of candidate transactions that will be added to
      * a new block.
      */
     void addTransactionToNewBlock(std::vector<User>& us,
+                                  std::vector<Transaction>& poo,
                                   std::vector<Transaction>& candidates);
 
     /**
@@ -129,6 +133,32 @@ class Blockchain {
     void generateTransactions(const int& count, const int& min, const int& max);
 
     /**
+     * @brief Verifies that the transactions inside the pool have not been
+     * tampered with
+     *
+     */
+    void verifyTransactions() {
+        // remove erase idiom
+        auto it =
+            std::remove_if(pool.begin(), pool.end(), [](const Transaction& tr) {
+                Hash h;
+                std::string transactionHash =
+                    h.hashString(tr.getSender() + tr.getAddress() +
+                                 std::to_string(tr.getTimestamp()) +
+                                 std::to_string(tr.getAmount()));
+
+                if (tr.getId() != transactionHash) {
+                    std::cout << "Transaction has been tampered with!\n"
+                              << "Bad transaction id is " << tr.getId()
+                              << "\nbut its hash is" << transactionHash
+                              << std::endl;
+                }
+                return tr.getId() != transactionHash;
+            });
+        pool.erase(it, pool.end());
+    }
+
+    /**
      * @brief The main function of this class. Mines the block. Pool needs
      * to have transactions and users vector needs to be populated in order
      * for this function to work.
@@ -156,5 +186,9 @@ class Blockchain {
 
     const std::vector<User>& getUsers() {
         return users;
+    }
+
+    const std::vector<Block>& getBlocks() {
+        return blockchain;
     }
 };
