@@ -40,6 +40,10 @@ class Block {
                        });
         // find merkle root hash
         MerkleTree m;
+#ifdef BE_VERBOSE
+        std::cout
+            << "\nConstructiing a merkle tree and finding its root hash...\n";
+#endif
         return m.findMerkleRootHash(hashes);
     }
 

@@ -150,4 +150,8 @@ class Blockchain {
     bool getPoolStatus() {
         return pool.empty();
     }
+
+    const std::vector<User>& getUsers() {
+        return users;
+    }
 };

@@ -1,4 +1,5 @@
 #include "blockchain.hpp"
+#include <iostream>
 #include "defines.hpp"
 
 void Blockchain::addTransactionToNewBlock(
@@ -6,6 +7,13 @@ void Blockchain::addTransactionToNewBlock(
     std::vector<Transaction>& candidates) {
     // TODO: check if it works as it should
     do {
+        // check if pool is empty before working with it
+        if (pool.empty()) {
+#ifdef BE_VERBOSE
+            std::cout << "No transactions left in a pool\n";
+#endif
+            return;
+        }
         auto it = selectRandomTransaction();
         auto sender = findUserByPk(us, it->getSender());
 
@@ -23,6 +31,7 @@ void Blockchain::addTransactionToNewBlock(
         }
 
         // check if the chosen transaction is not inside the pool already
+        // TODO: and what if it is inside already?
         if (std::find(candidates.begin(), candidates.end(), *it) ==
             candidates.end()) {
             // add chosen transaction to the candidates
@@ -30,6 +39,7 @@ void Blockchain::addTransactionToNewBlock(
             // update user balance
             updateUserBalance(us, *it);
             // transaction found, finish execution
+            pool.erase(it);
             return;
         }
     } while (true);
@@ -39,12 +49,16 @@ void Blockchain::generateTransactions(const int& count,
                                       const int& min,
                                       const int& max) {
     for (int i = 0; i < count; i++) {
-        auto sender = findUserByUsername(
-            users,
-            "user" + std::to_string(generateRandomNumber(0, users.size() - 1)));
-        auto address = findUserByUsername(
-            users,
-            "user" + std::to_string(generateRandomNumber(0, users.size() - 1)));
+        int num1 = generateRandomNumber(0, users.size() - 1);
+        auto sender = findUserByUsername(users, "user" + std::to_string(num1));
+
+        // transaction cant have the same sender and address
+        int num2;
+        do {
+            num2 = generateRandomNumber(0, users.size() - 1);
+        } while (num2 == num1);
+
+        auto address = findUserByUsername(users, "user" + std::to_string(num2));
         auto transactionAmount = generateRandomNumber(min, max);
 
         pool.emplace_back(sender->getPublicKey(), address->getPublicKey(),
@@ -77,11 +91,20 @@ void Blockchain::mineBlock() {
         return;
     }
 
+    std::cout << "Adding transactions..." << std::endl;
     // add new transactions to a block while there still are
     // transactions or we reached the maximum amount of transactions in
     // a block
     while (!pool.empty() && candidates.size() < TRANSACTIONS_IN_BLOCK) {
         addTransactionToNewBlock(tempUsers, candidates);
+    }
+
+    // we cant create a new block if there are no transactions
+    if (candidates.empty()) {
+#ifdef BE_VERBOSE
+        std::cout << "There is not enough transactions to form a block.\n";
+#endif
+        return;
     }
 
     // create a new block
@@ -104,7 +127,7 @@ void Blockchain::mineBlock() {
         updateUserBalance(users, t);
 
     // remove transactions from a pool
-    removeTransactions(block);
+    // removeTransactions(block);
 }
 
 void Blockchain::removeTransactions(const Block& block) {

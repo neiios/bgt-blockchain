@@ -8,7 +8,6 @@
 #include <sstream>
 #include <string>
 #include "defines.hpp"
-
 class Transaction {
   private:
     // hash of other values
@@ -46,8 +45,7 @@ class Transaction {
      *
      */
     friend std::ostream& operator<<(std::ostream& os, const Transaction& t) {
-        os << "Hash: " << t.id << " Amount: " << t.amount << " " << t.sender
-           << " -> " << t.address << " Timestamp: " << t.timestamp;
+        os << "Hash:" << t.id << " Amount: " << t.amount << " " << t.sender << " -> " << t.address;
         return os;
     }
 

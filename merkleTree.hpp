@@ -26,23 +26,27 @@ class MerkleTree {
     std::string findMerkleRootHash(const std::vector<std::string>& txs) {
         std::vector<std::string> tempTxs;
         // base case
-        if (txs.size() == 1)
+        if (txs.size() == 1) {
+#ifdef BE_VERBOSE
+            std::cout << "Root hash: " << txs.at(0) << std::endl;
+#endif
             return txs.at(0);
+        }
+
+#ifdef BE_VERBOSE
+        std::cout << "Current level (hash count): " << txs.size() << " ";
+        for (const auto& tx : txs)
+            std::cout << tx << " ";
+        std::cout << std::endl;
+#endif
 
         for (size_t i = 0; i < txs.size(); i += 2) {
-            // TODO: i can do better than that
             if (i + 1 < txs.size()) {
                 tempTxs.push_back(hashPair(txs.at(i), txs.at(i + 1)));
             } else {
                 tempTxs.push_back(hashPair(txs.at(i), txs.at(i)));
             }
         }
-
-#ifdef BE_VERBOSE
-        std::cout << tempTxs.size() << std::endl;
-        for (const auto& tx : tempTxs)
-            std::cout << tx << std::endl;
-#endif
 
         return findMerkleRootHash(tempTxs);
     }
