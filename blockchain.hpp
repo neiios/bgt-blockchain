@@ -134,7 +134,7 @@ class Blockchain {
 
     /**
      * @brief Verifies that the transactions inside the pool have not been
-     * tampered with
+     * tampered with and removes bad transactions
      *
      */
     void verifyTransactions() {
@@ -164,7 +164,7 @@ class Blockchain {
      * for this function to work.
      *
      */
-    void mineBlock(const size_t& initialBlockchainSize);
+    void mineBlock(const size_t& initialBlockchainSizem, bool& finishedMining);
 
     friend std::ostream& operator<<(std::ostream& os, const Blockchain& b) {
         int i = 0;

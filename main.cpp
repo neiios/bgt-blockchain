@@ -41,10 +41,13 @@ void simulateBlockchain() {
     // mine the block
     std::cout << printLines() << "Mining..." << std::endl;
     do {
+        std::cout << "Started mining block " << b.getBlocks().size()
+                  << std::endl;
+        bool finishedMining = false;
         // parallel mining
-#pragma omp parallel for num_threads(MINER_COUNT)
+#pragma omp parallel for num_threads(MINER_COUNT) shared(finishedMining)
         for (int i = 0; i < MINER_COUNT; i++) {
-            b.mineBlock(b.getBlocks().size());
+            b.mineBlock(b.getBlocks().size(), finishedMining);
         }
     } while (!b.getPoolStatus());
     // more info at the end

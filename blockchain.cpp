@@ -7,7 +7,6 @@ void Blockchain::addTransactionToNewBlock(
     std::vector<User>& us,
     std::vector<Transaction>& poo,
     std::vector<Transaction>& candidates) {
-    // TODO: check if it works as it should
     do {
         // check if pool is empty before working with it
         if (poo.empty()) {
@@ -32,17 +31,13 @@ void Blockchain::addTransactionToNewBlock(
             continue;
         }
 
-        // check if the chosen transaction is not inside the pool already
-        if (std::find(candidates.begin(), candidates.end(), *it) ==
-            candidates.end()) {
-            // add chosen transaction to the candidates
-            candidates.push_back(*it);
-            // update user balance
-            updateUserBalance(us, *it);
-            // transaction found, finish execution
-            poo.erase(it);
-            return;
-        }
+        // add chosen transaction to the candidates
+        candidates.push_back(*it);
+        // update user balance
+        updateUserBalance(us, *it);
+        // transaction found, finish execution
+        poo.erase(it);
+        return;
     } while (true);
 }
 
@@ -78,7 +73,8 @@ void Blockchain::generateTransactions(const int& count,
     }
 }
 
-void Blockchain::mineBlock(const size_t& initialBlockchainSize) {
+void Blockchain::mineBlock(const size_t& initialBlockchainSize,
+                           bool& finishedMining) {
     // sanity check
     if (users.empty()) {
         std::cerr << "Create the users." << std::endl;
@@ -127,7 +123,11 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize) {
     Block block(getLastBlockHash(), DIFFICULTY_TARGET, 1, candidates);
 
     // actually mine it
-    block.mine();
+    block.mine(finishedMining);
+
+#pragma omp flush(finishedMining)
+    if (finishedMining)
+        return;
 
     // check newly mined block hash
     if (!checkBlockHash(block)) {
@@ -136,7 +136,13 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize) {
     }
 
     // DANGER ZONE FOR OPENMP
+    // only one thread at a time can access this
+#pragma omp critical
     if (blockchain.size() == initialBlockchainSize) {
+        // set a flag for other openmp threads
+#pragma omp flush(finishedMining)
+        finishedMining = true;
+
         // add the mined block to the blockhain
         blockchain.push_back(block);
 

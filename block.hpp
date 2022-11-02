@@ -65,11 +65,14 @@ class Block {
      * zeros
      *
      */
-    void mine() {
+    void mine(const bool& finishedMining) {
         Hash h;
         std::string prefix(difTarget, '0');
         // actually mine the block
         while (true) {
+#pragma omp flush(finishedMining)
+            if (finishedMining)
+                return;
             nonce++;
             // hash the header of a block
             std::string hash = h.hashString(
