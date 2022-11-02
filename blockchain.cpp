@@ -10,7 +10,7 @@ void Blockchain::addTransactionToNewBlock(
     do {
         // check if pool is empty before working with it
         if (poo.empty()) {
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_ADD
             std::cout << "No transactions left in a pool\n";
 #endif
             return;
@@ -20,7 +20,7 @@ void Blockchain::addTransactionToNewBlock(
 
         // check the amount transferred
         if (sender->getBalance() < it->getAmount()) {
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_ADD
             std::cout << "Sender has not enough balance for the "
                          "transaction. \nBalance: "
                       << sender->getBalance()
@@ -71,20 +71,19 @@ void Blockchain::generateTransactions(const int& count,
 
         pool.emplace_back(sender->getPublicKey(), address->getPublicKey(),
                           transactionAmount);
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_GENERATION
         std::cout << pool.back() << std::endl;
 #endif
     }
 }
 
 void Blockchain::mineBlock() {
-    // TODO: create several candidate blocks
     // sanity check
     if (users.empty()) {
         std::cerr << "Create the users." << std::endl;
         return;
     }
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_MINING
     std::cout << std::string(50, '-') << "\nMining the block "
               << blockchain.size() << std::endl;
 #endif
@@ -95,13 +94,13 @@ void Blockchain::mineBlock() {
     std::vector<User> tempUsers(users);
     // immediately return if pool is empty
     if (tempPool.empty()) {
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_MINING
         std::cout << "The pool is empty. Nothing to mine." << std::endl;
 #endif
         return;
     }
 
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_MINING
     std::cout << "Adding transactions..." << std::endl;
 #endif
     // add new transactions to a block while there still are
@@ -117,7 +116,7 @@ void Blockchain::mineBlock() {
         // if we go to here we know that there are no valid transactions inside
         // temp pool and we can safely clear the real pool
         pool.clear();
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_MINING
         std::cout << "There is not enough transactions to form a block.\n";
 #endif
         return;
@@ -147,7 +146,7 @@ void Blockchain::mineBlock() {
 }
 
 void Blockchain::removeTransactions(const Block& block) {
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_REMOVE
     std::cout << "Removing transactions from a pool." << std::endl;
 #endif
     for (const auto& t : block.getTransactions()) {

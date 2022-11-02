@@ -117,7 +117,7 @@ class Blockchain {
         for (int i = 0; i < count; i++) {
             users.emplace_back("user" + std::to_string(i),
                                generateRandomNumber(min, max));
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_GENERATION
             std::cout << users.at(i) << std::endl;
 #endif
         }

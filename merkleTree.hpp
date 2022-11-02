@@ -27,13 +27,13 @@ class MerkleTree {
         std::vector<std::string> tempTxs;
         // base case
         if (txs.size() == 1) {
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_MERKLE
             std::cout << "Root hash: " << txs.at(0) << std::endl;
 #endif
             return txs.at(0);
         }
 
-#ifdef BE_VERBOSE
+#ifdef VERBOSE_MERKLE
         std::cout << "Current level (hash count): " << txs.size() << " ";
         for (const auto& tx : txs)
             std::cout << tx << " ";
