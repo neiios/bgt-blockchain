@@ -164,7 +164,7 @@ class Blockchain {
      * for this function to work.
      *
      */
-    void mineBlock();
+    void mineBlock(const size_t& initialBlockchainSize);
 
     friend std::ostream& operator<<(std::ostream& os, const Blockchain& b) {
         int i = 0;

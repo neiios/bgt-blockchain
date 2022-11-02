@@ -16,10 +16,10 @@ DEPFILES=$(patsubst %.cpp,%.d,$(CFILES))
 all: $(BINARY)
 
 $(BINARY): $(OBJECTS)
-	$(CC) -o $@ $^
+	$(CC) -o $@ $^ -fopenmp
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $< -fopenmp
 
 clean:
 	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)

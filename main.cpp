@@ -1,4 +1,5 @@
 #include <getopt.h>
+#include <omp.h>
 #include <iostream>
 #include <list>
 #include <random>
@@ -40,7 +41,11 @@ void simulateBlockchain() {
     // mine the block
     std::cout << printLines() << "Mining..." << std::endl;
     do {
-        b.mineBlock();
+        // parallel mining
+#pragma omp parallel for num_threads(MINER_COUNT)
+        for (int i = 0; i < MINER_COUNT; i++) {
+            b.mineBlock(b.getBlocks().size());
+        }
     } while (!b.getPoolStatus());
     // more info at the end
     std::cout << printLines() << "Final state:\n"

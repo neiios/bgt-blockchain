@@ -1,6 +1,7 @@
 #include "blockchain.hpp"
 #include <iostream>
 #include "defines.hpp"
+#include "omp.h"
 
 void Blockchain::addTransactionToNewBlock(
     std::vector<User>& us,
@@ -77,7 +78,7 @@ void Blockchain::generateTransactions(const int& count,
     }
 }
 
-void Blockchain::mineBlock() {
+void Blockchain::mineBlock(const size_t& initialBlockchainSize) {
     // sanity check
     if (users.empty()) {
         std::cerr << "Create the users." << std::endl;
@@ -134,15 +135,22 @@ void Blockchain::mineBlock() {
         return;
     }
 
-    // add the mined block to the blockhain
-    blockchain.push_back(block);
+    // DANGER ZONE FOR OPENMP
+    if (blockchain.size() == initialBlockchainSize) {
+        // add the mined block to the blockhain
+        blockchain.push_back(block);
 
-    // update users' balance
-    for (const auto& t : block.getTransactions())
-        updateUserBalance(users, t);
+        // update users' balance
+        for (const auto& t : block.getTransactions())
+            updateUserBalance(users, t);
 
-    // remove transactions from a pool
-    removeTransactions(block);
+        // remove transactions from a pool
+        removeTransactions(block);
+
+        std::cout << "Block " << blockchain.size()
+                  << " has been mined by thread " << omp_get_thread_num()
+                  << "\n";
+    }
 }
 
 void Blockchain::removeTransactions(const Block& block) {
