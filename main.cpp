@@ -45,7 +45,7 @@ void simulateBlockchain() {
                   << std::endl;
         bool finishedMining = false;
         // parallel mining
-#pragma omp parallel for num_threads(MINER_COUNT) shared(finishedMining)
+#pragma omp parallel for num_threads(MINER_COUNT)
         for (int i = 0; i < MINER_COUNT; i++) {
             b.mineBlock(b.getBlocks().size(), finishedMining);
         }

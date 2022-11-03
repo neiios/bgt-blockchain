@@ -108,6 +108,7 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize,
     }
 
     // we cant create a new block if there are no transactions
+#pragma omp critical
     if (candidates.empty()) {
         // remove transaction from a real pool
         // if we go to here we know that there are no valid transactions inside
@@ -116,8 +117,10 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize,
 #ifdef VERBOSE_MINING
         std::cout << "There is not enough transactions to form a block.\n";
 #endif
-        return;
     }
+
+    if (candidates.empty() && pool.empty())
+        return;
 
     // create a new block
     Block block(getLastBlockHash(), DIFFICULTY_TARGET, 1, candidates);
@@ -140,7 +143,6 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize,
 #pragma omp critical
     if (blockchain.size() == initialBlockchainSize) {
         // set a flag for other openmp threads
-#pragma omp flush(finishedMining)
         finishedMining = true;
 
         // add the mined block to the blockhain

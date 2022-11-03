@@ -5,6 +5,7 @@ INCDIRS=. bgt-hash
 
 CC=g++
 OPT=-O3 -march=native
+# OPT=-O0
 DEPFLAGS=-MP -MD
 CFLAGS=-Wall -Wextra -std=gnu++20 -g $(foreach D,$(INCDIRS),-I$(D)) $(OPT) $(DEPFLAGS)
 
