@@ -6,6 +6,7 @@
 void Blockchain::addTransactionToNewBlock(
     std::vector<User>& us,
     std::vector<Transaction>& poo,
+    std::vector<Transaction>& invalid,
     std::vector<Transaction>& candidates) {
     do {
         // check if pool is empty before working with it
@@ -27,6 +28,7 @@ void Blockchain::addTransactionToNewBlock(
                       << "\nTransaction amount: " << it->getAmount()
                       << std::endl;
 #endif
+            invalid.push_back(*it);
             poo.erase(it);
             continue;
         }
@@ -88,6 +90,7 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize,
     std::vector<Transaction> candidates;
     // temporary vectors to store effects of a new block
     std::vector<Transaction> tempPool(pool);
+    std::vector<Transaction> invalidTxs;
     std::vector<User> tempUsers(users);
     // immediately return if pool is empty
     if (tempPool.empty()) {
@@ -104,7 +107,7 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize,
     // transactions or we reached the maximum amount of transactions in
     // a block
     while (!tempPool.empty() && candidates.size() < TRANSACTIONS_IN_BLOCK) {
-        addTransactionToNewBlock(tempUsers, tempPool, candidates);
+        addTransactionToNewBlock(tempUsers, tempPool, invalidTxs, candidates);
     }
 
     // we cant create a new block if there are no transactions
@@ -153,19 +156,26 @@ void Blockchain::mineBlock(const size_t& initialBlockchainSize,
             updateUserBalance(users, t);
 
         // remove transactions from a pool
-        removeTransactions(block);
+        removeTransactions(block.getTransactions(),
+                           "Removing transactions from a pool.");
 
-        std::cout << "Block " << blockchain.size()
+        // remove invalid transactions from a pool
+        if (!invalidTxs.empty())
+            removeTransactions(invalidTxs,
+                               "Removing invalid transactions from a pool.");
+
+        std::cout << "Block " << blockchain.size() - 1
                   << " has been mined by thread " << omp_get_thread_num()
                   << "\n";
     }
 }
 
-void Blockchain::removeTransactions(const Block& block) {
+void Blockchain::removeTransactions(const std::vector<Transaction>& txs,
+                                    const std::string& msg) {
 #ifdef VERBOSE_REMOVE
-    std::cout << "Removing transactions from a pool." << std::endl;
+    std::cout << msg << std::endl;
 #endif
-    for (const auto& t : block.getTransactions()) {
+    for (const auto& t : txs) {
         auto it = std::find_if(pool.begin(), pool.end(), [&t](Transaction tr) {
             return tr.getId() == t.getId();
         });

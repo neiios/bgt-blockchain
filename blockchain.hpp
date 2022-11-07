@@ -68,6 +68,7 @@ class Blockchain {
      */
     void addTransactionToNewBlock(std::vector<User>& us,
                                   std::vector<Transaction>& poo,
+                                  std::vector<Transaction>& invalid,
                                   std::vector<Transaction>& candidates);
 
     /**
@@ -91,8 +92,8 @@ class Blockchain {
      *
      * @param block mined block
      */
-    void removeTransactions(const Block& block);
-
+    void removeTransactions(const std::vector<Transaction>& txs,
+                            const std::string& msg);
     /**
      * @brief Updates user balance with transactions from a new block
      *
