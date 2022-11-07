@@ -1,5 +1,11 @@
 # Blockchain
 
+# v0.3 pakeitimai
+
+Vietoj mano merkle tree realizacijos buvo panaudota create_merkle() funkciją.
+Dabar, prieš kompiliuojant programą, reikės įsidiegti [libbitcoin-system v2](https://github.com/libbitcoin/libbitcoin-system/tree/v2.12.0) biblioteką.
+Visus kodo pakeitimus galima peržiūrėti čia: https://github.com/richard96292/bgt-blockchain/commit/7f628822976fae5febfc646cc709173a5f5d7b32
+
 ## Projekto struktūra
 
 ```
@@ -26,19 +32,6 @@ bgt-blockchain
 1 directory, 17 files
 ```
 
-## Projekto setup'as
-
-```
-# clone the repository
-git clone https://github.com/richard96292/bgt-blockchain
-
-# compile program with make (must be inside the root project folder)
-make
-
-# run the blockchain simulation
-./bin -b
-```
-
 ## Programos veikimas
 
 1. Naujų user'ių generavimas (1000)
@@ -49,3 +42,18 @@ make
 1. Bloko tikrinimas
 1. Naujas blokas įrašomas į grandinę
 1. Žingsiai 3-5 kartojami, kol pool'e yra transakcijos
+
+## Projekto setup'as
+
+```
+# clone the repository
+git clone https://github.com/richard96292/bgt-blockchain
+
+# install libbitcoin library
+
+# compile program with make (must be inside the root project folder)
+make
+
+# run the blockchain simulation
+./bin -b
+```
