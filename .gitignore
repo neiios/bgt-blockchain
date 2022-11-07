@@ -8,3 +8,5 @@ compile_commands.json
 build
 cmake-build-debug
 testing/*.txt
+build-libbitcoin-system
+libbitcoin
